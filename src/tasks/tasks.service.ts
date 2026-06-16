@@ -5,11 +5,11 @@ import { Task, TaskStatus } from './task.types';
 export class TasksService {
   private tasks: Task[] = [];
 
-  getAllTasks(): Task[] {
+  findAll(): Task[] {
     return this.tasks;
   }
 
-  getTaskById(id: string): Task {
+  findOne(id: string): Task {
     const found = this.tasks.find(task => task.id === id);
     if (!found) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
@@ -17,7 +17,7 @@ export class TasksService {
     return found;
   }
 
-  createTask(title: string): Task {
+  create(title: string): Task {
     const task: Task = {
       id: Date.now().toString(),
       title,
@@ -27,8 +27,8 @@ export class TasksService {
     return task;
   }
 
-  updateTask(id: string, status?: TaskStatus, title?: string): Task {
-    const task = this.getTaskById(id);
+  update(id: string, status?: TaskStatus, title?: string): Task {
+    const task = this.findOne(id);
     if (status) {
       task.status = status;
     }
@@ -38,8 +38,8 @@ export class TasksService {
     return task;
   }
 
-  deleteTask(id: string): void {
-    const found = this.getTaskById(id);
+  remove(id: string): void {
+    const found = this.findOne(id);
     this.tasks = this.tasks.filter(task => task.id !== found.id);
   }
 }
