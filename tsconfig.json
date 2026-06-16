@@ -26,6 +26,7 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,
-    "esModuleInterop": true   // <-- ช่วยให้ import library ต่างๆ ได้ง่ายขึ้น
+    "esModuleInterop": true,   // <-- ช่วยให้ import library ต่างๆ ได้ง่ายขึ้น
+    "types": ["node"]
   }
 }
