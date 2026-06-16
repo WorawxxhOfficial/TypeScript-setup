@@ -1,0 +1,18 @@
+meta {
+  name: Update Task
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://localhost:3000/tasks/1781581061850
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "status": "IN_PROGRESS",
+    "title": "เขียนโค้ด NestJS (กำลังทำ)"
+  }
+}

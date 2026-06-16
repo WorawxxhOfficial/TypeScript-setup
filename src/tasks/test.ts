@@ -6,15 +6,13 @@ const myTask: Task = {
     status: 'OPEN',
 };
 
-// ❌ Error: ขาด property 'status'
-const myTask2: Task = {
-    id: '2',
-    title: 'ลืมใส่ Status',
-};
+// const myTask2_fail_1: Task = {
+//     id: '2',
+//     title: 'wasd',
+// };
 
-// ❌ Error: Type '"DOING"' is not assignable to type 'TaskStatus'.
-const myTask3: Task = {
-    id: '3',
-    title: 'ใส่ Status ผิด',
-    status: 'DOING', // เพราะเราล็อคไว้แค่ 3 คำ DOING จึงพัง
-};
+// const myTask3_fail_2: Task = {
+//     id: '3',
+//     title: 'ใส่ Status ผิด',
+//     status: 'DOING', 
+// };
