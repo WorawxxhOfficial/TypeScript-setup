@@ -1,0 +1,17 @@
+meta {
+  name: Create Task 2
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:3000/tasks
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "title": "เขียนโค้ด NestJS"
+  }
+}
