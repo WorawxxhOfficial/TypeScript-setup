@@ -17,23 +17,29 @@ export class TasksService {
     return found;
   }
 
-  create(title: string): Task {
+  create(title: string, description?: string): Task {
     const task: Task = {
       id: Date.now().toString(),
       title,
       status: 'OPEN',
     };
+    if (description !== undefined) {
+      task.description = description;
+    }
     this.tasks.push(task);
     return task;
   }
 
-  update(id: string, status?: TaskStatus, title?: string): Task {
+  update(id: string, status?: TaskStatus, title?: string, description?: string): Task {
     const task = this.findOne(id);
     if (status) {
       task.status = status;
     }
     if (title !== undefined) {
       task.title = title;
+    }
+    if (description !== undefined) {
+      task.description = description;
     }
     return task;
   }
