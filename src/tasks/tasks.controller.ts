@@ -7,8 +7,11 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
   @Post()
-  create(@Body('title') title: string): Task {
-    return this.tasksService.create(title);
+  create(
+    @Body('title') title: string,
+    @Body('description') description?: string,
+  ): Task {
+    return this.tasksService.create(title, description);
   }
 
   @Get()
@@ -26,8 +29,9 @@ export class TasksController {
     @Param('id') id: string,
     @Body('status') status?: TaskStatus,
     @Body('title') title?: string,
+    @Body('description') description?: string,
   ): Task {
-    return this.tasksService.update(id, status, title);
+    return this.tasksService.update(id, status, title, description);
   }
 
   @Delete(':id')
