@@ -3,7 +3,7 @@ import { Task } from './task.types';
 const myTask: Task = {
     id: '1',
     title: 'เขียนโค้ด NestJS',
-    status: 'OPEN',
+    status: 'todo',
 };
 
 // const myTask2_fail_1: Task = {

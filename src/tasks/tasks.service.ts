@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Task, TaskStatus } from './task.types';
+import { Task } from './task.types';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -17,22 +19,28 @@ export class TasksService {
     return found;
   }
 
-  create(title: string, description?: string): Task {
+  create(createTaskDto: CreateTaskDto): Task {
+    const { title, description, status, dueDate } = createTaskDto;
     const task: Task = {
       id: Date.now().toString(),
       title,
-      status: 'OPEN',
+      status: status || 'todo',
     };
     if (description !== undefined) {
       task.description = description;
+    }
+    if (dueDate !== undefined) {
+      task.dueDate = dueDate;
     }
     this.tasks.push(task);
     return task;
   }
 
-  update(id: string, status?: TaskStatus, title?: string, description?: string): Task {
+  update(id: string, updateTaskDto: UpdateTaskDto): Task {
     const task = this.findOne(id);
-    if (status) {
+    const { title, status, description, dueDate } = updateTaskDto;
+    
+    if (status !== undefined) {
       task.status = status;
     }
     if (title !== undefined) {
@@ -40,6 +48,9 @@ export class TasksService {
     }
     if (description !== undefined) {
       task.description = description;
+    }
+    if (dueDate !== undefined) {
+      task.dueDate = dueDate;
     }
     return task;
   }
