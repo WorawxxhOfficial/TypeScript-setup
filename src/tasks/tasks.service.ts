@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task } from './task.types';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class TasksService {
@@ -22,7 +23,7 @@ export class TasksService {
   create(createTaskDto: CreateTaskDto): Task {
     const { title, description, status, dueDate } = createTaskDto;
     const task: Task = {
-      id: Date.now().toString(),
+      id: randomUUID(),
       title,
       status: status || 'todo',
     };
