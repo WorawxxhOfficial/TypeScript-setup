@@ -1,6 +1,6 @@
 # NestJS TypeScript Setup
 
-A lightweight, modern TypeScript project configured with the NestJS framework, supporting full CRUD operations for Task management.
+A lightweight, modern TypeScript project configured with the NestJS framework, supporting full CRUD operations for Task management with built-in validation, logging, and error handling.
 
 ---
 
@@ -34,21 +34,45 @@ npm run start:dev
 
 ---
 
+## Global System Components
+
+The project is pre-configured with the following global modules in [main.ts](file:///Users/mac/Documents/Typescript-setup/TypeScript-setup/src/main.ts):
+
+* **ValidationPipe**: Performs payload validation using `class-validator` and `class-transformer`.
+  * `whitelist: true` – Strips properties that do not have validation decorators.
+  * `forbidNonWhitelisted: true` – Rejects request and throws `400 Bad Request` if any non-whitelisted property is present.
+  * `transform: true` – Automatically parses incoming payloads into typed DTO instances.
+* **HttpExceptionFilter**: Standardizes error response structure for all HTTP exceptions across the entire app.
+* **LoggingInterceptor**: Logs HTTP method, request path, and execution duration (ms) in the console.
+
+---
+
 ## API Endpoints
 
 ### Core Endpoints
 * **`GET /`** - Default greeting ("Hello World!").
 
 ### Task Management (`/tasks`)
-The tasks are persistent in memory until the application is restarted.
+The tasks are persistent in memory until the application is restarted. Task IDs are generated as UUIDs.
 
 | Method | Endpoint | Description | Request Body / Params | Expected Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **POST** | `/tasks` | Create a new task | `{ "title": "string" }` | `201 Created` |
+| **POST** | `/tasks` | Create a new task | `{ "title": "string", "description"?: "string", "dueDate"?: "ISO8601 Date" }` | `201 Created` |
 | **GET** | `/tasks` | Retrieve all tasks | *None* | `200 OK` |
-| **GET** | `/tasks/:id` | Retrieve a single task by ID | `id` in Path | `200 OK` (or `404` if not found) |
-| **PATCH** | `/tasks/:id` | Update task status or title | `{ "title"?: "string", "status"?: "OPEN" \| "IN_PROGRESS" \| "DONE" }` | `200 OK` (or `404` if not found) |
-| **DELETE** | `/tasks/:id` | Delete task by ID | `id` in Path | `200 OK` (or `404` if not found) |
+| **GET** | `/tasks/:id` | Retrieve a single task by ID | `id` (must be a valid UUID) | `200 OK` (or `404` / `400`) |
+| **PATCH** | `/tasks/:id` | Update task status or details | `{ "title"?: "string", "status"?: "todo" \| "doing" \| "done", "description"?: "string" }` | `200 OK` (or `404` / `400`) |
+| **DELETE** | `/tasks/:id` | Delete task by ID | `id` (must be a valid UUID) | `200 OK` (or `404` / `400`) |
+
+#### Error Response Format
+All HTTP errors (like Validation errors or Not Found exceptions) are returned in a standardized format:
+```json
+{
+  "statusCode": 400,
+  "path": "/tasks/abc",
+  "timestamp": "2026-06-23T06:27:48.017Z",
+  "message": "Validation failed (uuid is expected)"
+}
+```
 
 ---
 
@@ -58,7 +82,7 @@ A Bruno API collection is available in the `bruno/` directory:
 
 1. Open **Bruno API Client**.
 2. Click **Open Collection** and select the [bruno/](file:///Users/mac/Documents/Typescript-setup/TypeScript-setup/bruno) folder in this project root.
-3. Use the collection to test all endpoints. For endpoints requiring an `:id`, replace `PASTE_YOUR_TASK_ID_HERE` with the ID returned from your **Create Task** response.
+3. Use the collection to test all endpoints. For endpoints requiring an `:id`, replace `PASTE_YOUR_TASK_ID_HERE` with the UUID returned from your **Create Task** response.
 
 ---
 
@@ -67,14 +91,22 @@ A Bruno API collection is available in the `bruno/` directory:
 ```text
 ├── bruno/                 # Bruno API requests collection
 ├── src/
-│   ├── main.ts            # Entry point of the NestJS application
+│   ├── main.ts            # Entry point of the NestJS application (registers Pipes/Filters/Interceptors)
 │   ├── app.module.ts      # Core App module
 │   ├── app.controller.ts  # Hello World controller
+│   ├── common/            # Shared guards, interceptors, and filters
+│   │   ├── http-exception.filter.ts # Standardizes error JSON outputs
+│   │   └── logging.interceptor.ts   # Logs request metrics
 │   └── tasks/             # Tasks feature module
-│       ├── tasks.module.ts     # Tasks feature module declaration
-│       ├── tasks.controller.ts # Tasks controller exposing REST endpoints
-│       ├── tasks.service.ts    # Tasks service (in-memory database & CRUD logic)
-│       └── task.types.ts       # Type definitions (Task interface and TaskStatus)
+│       ├── tasks.module.ts          # Tasks module declaration
+│       ├── tasks.controller.ts      # Exposes CRUD endpoints with ParseUUIDPipe
+│       ├── tasks.service.ts         # In-memory CRUD database logic
+│       ├── task.types.ts            # Task types ('todo' | 'doing' | 'done')
+│       ├── pipes/
+│       │   └── trim.pipe.ts         # Custom pipe to trim body strings
+│       └── dto/
+│           ├── create-task.dto.ts   # Rules validation for creating tasks
+│           └── update-task.dto.ts   # Rules validation for updating tasks
 ├── tsconfig.json          # TypeScript compiler options
 └── package.json           # Dependencies and run scripts
 ```
