@@ -1,8 +1,9 @@
-import { IsNotEmpty, IsString, MaxLength, IsOptional, IsIn, IsISO8601 } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, MinLength, IsOptional, IsIn, IsISO8601 } from 'class-validator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
   @IsString()
+  @MinLength(3)
   @MaxLength(120)
   title!: string;
 
